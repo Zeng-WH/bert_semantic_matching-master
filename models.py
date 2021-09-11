@@ -38,7 +38,7 @@ class SemanticMatching(Model):
         if encoder:
             hidden2label_in_dim = encoder.get_output_dim()
         else:
-            hidden2label_in_dim = self.bert_model.hidden_size
+            hidden2label_in_dim = 768
         self.hidden2label = torch.nn.Linear(
             in_features=hidden2label_in_dim,
             out_features=vocab.get_vocab_size("labels")

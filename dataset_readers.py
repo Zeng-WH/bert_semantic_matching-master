@@ -40,7 +40,8 @@ class SemanticMatchingDatasetReader(DatasetReader):
             label_field = LabelField(label=label)
             fields["labels"] = label_field
         return Instance(fields)
-    
+
+    '''
     def _read(self, file_path: str) -> Iterator[Instance]:
         df = pd.read_csv(file_path)
         for line_idx in range(len(df)):
@@ -58,7 +59,24 @@ class SemanticMatchingDatasetReader(DatasetReader):
             if not sentence1 or not sentence2 or not label:
                 continue
             yield self.text_to_instance(sentence1, sentence2, label)
-
+    '''
+    def _read(self, file_path: str) -> Iterator[Instance]:
+        with open(file_path, 'r') as r:
+            text_list = json.load(r)
+        for item in text_list:
+            sentence1 = str(item['sent_1']).strip()
+            if len(sentence1) > 160:
+                # 截断数据
+                sentence1 = sentence1[0:150]
+            sentence2 = str(item['sent_2']).strip()
+            if len(sentence2) > 160:
+                # 截断数据
+                sentence2 = sentence2[0:150]
+                # print(len(sentence1))
+            label = str(item['label']).strip()
+            if not sentence1 or not sentence2 or not label:
+                continue
+            yield self.text_to_instance(sentence1, sentence2, label)
 
 if __name__ == "__main__":
     reader = SemanticMatchingDatasetReader("bert-base-chinese")
